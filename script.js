@@ -1,6 +1,7 @@
 const todoInput = document.querySelector(".todo-input");
 const todoBtn = document.querySelector(".todo-btn");
 const todoList = document.querySelector(".todo-list");
+const filter = document.querySelector(".filter-todo");
 
 document.addEventListener("DOMContentLoaded", getTodos());
 
@@ -56,6 +57,7 @@ todoList.addEventListener("click", function deleteCheck(e) {
   if (item.classList[0] === "delete-btn") {
     const todo = item.parentElement;
     todo.remove();
+    removeLocalTodos(todo);
   }
 
   //check
@@ -64,6 +66,38 @@ todoList.addEventListener("click", function deleteCheck(e) {
     const todo = item.parentElement;
     todo.classList.toggle("completed");
   }
+});
+
+filter.addEventListener("change", function filterTodo(e) {
+  const todos = todoList.childNodes;
+  console.log(todos);
+
+  todos.forEach(function (todo) {
+    switch (e.target.value) {
+      case "completed":
+        if (todo.classList.contains("completed")) {
+          todo.style.display = "flex";
+        } else {
+          todo.style.display = "none";
+        }
+
+        break;
+
+      case "incomplete":
+        if (!todo.classList.contains("completed")) {
+          todo.style.display = "flex";
+        } else {
+          todo.style.display = "none";
+        }
+
+        break;
+
+      default:
+        todo.style.display = "flex";
+
+        break;
+    }
+  });
 });
 
 function saveTodos(todo) {
@@ -89,7 +123,7 @@ function getTodos() {
   let todos;
 
   if (localStorage.getItem("todos") === null) {
-    todos == [];
+    todos = [];
   } else {
     todos = JSON.parse(localStorage.getItem("todos"));
   }
@@ -124,4 +158,23 @@ function getTodos() {
     //append todoDiv to todoList (main ul)
     todoList.appendChild(todoDiv);
   });
+}
+
+function removeLocalTodos(todo) {
+  let todos;
+
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+
+  console.log(todo);
+
+  const todoIndex = todo.children[0].innerText;
+
+  console.log(todoIndex);
+
+  todos.splice(todos.indexOf(todoIndex, 1));
+  localStorage.setItem("todos", JSON.stringify(todos));
 }
